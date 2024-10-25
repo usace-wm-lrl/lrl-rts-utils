@@ -107,7 +107,7 @@ class Cumulus():
                     cls.report("No product downloads required.  Aborting...")
                     return
             else:
-                totalTime = after - before
+                totalTime = before - after
                 timeout = int(totalTime.days * 20)
                 if timeout < 300:
                     timeout = 300
