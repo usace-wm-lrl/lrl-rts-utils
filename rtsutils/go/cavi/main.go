@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"path"
 	"time"
 
 	"github.com/go-git/go-git/v5"
@@ -27,6 +28,7 @@ type flagOptions struct {
 	ID         string
 	Scheme     string
 	Host       string
+	ApiPath    string
 	Auth       string
 	Subcommand string
 	After      string
@@ -69,7 +71,6 @@ func main() {
 		Scheme: co.Scheme,
 		Host:   co.Host,
 	}
-
 	if _, err := checkService(url.String()); err != nil {
 		fmt.Fprintf(os.Stderr, "error::%s\n", err)
 		os.Exit(1)
@@ -81,7 +82,7 @@ func main() {
 	case "git":
 		// not do all the git stuff
 		log.Println("Initiating 'git' command")
-		url.Path = co.Endpoint
+		url.Path = path.Join(co.ApiPath, co.Endpoint)
 		ref := plumbing.NewBranchReferenceName(co.Branch)
 		err := goGitRepo(url.String(), "origin", ref, co.Path)
 
@@ -112,7 +113,7 @@ func main() {
 		// 	co.Auth = string(auth)
 		// }
 
-		url.Path = co.Endpoint
+		url.Path = path.Join(co.ApiPath, co.Endpoint)
 
 		p := payload{
 			After:       co.After,
@@ -122,7 +123,7 @@ func main() {
 		}
 		log.Printf("%s", p)
 		log.Printf("%s", url.String())
-		dss, err := grid(url, p, int(co.Timeout))
+		dss, err := grid(url, p, int(co.Timeout), co.ApiPath)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error::%s\n", err)
 			os.Exit(1)
@@ -133,13 +134,14 @@ func main() {
 			fmt.Fprintf(os.Stderr, "error::Please provide a slug for the watershed\n")
 			os.Exit(1)
 		}
+
 		log.Println("Initiating 'extract' command")
 
 		q := url.Query()
 		q.Set("after", co.After)
 		q.Set("before", co.Before)
 		url.RawQuery = q.Encode()
-		url.Path = co.Endpoint
+		url.Path = path.Join(co.ApiPath, co.Endpoint)
 
 		log.Printf("URL: %s", url.String())
 
@@ -150,7 +152,7 @@ func main() {
 			os.Exit(1)
 		}
 		log.Println("Initiating 'endpoint' command")
-		url.Path = co.Endpoint
+		url.Path = path.Join(co.ApiPath, co.Endpoint)
 		b, err := getResponseBody(url.String())
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error::%s\n", err)
@@ -168,6 +170,7 @@ func (co *flagOptions) addFlagOptions() {
 	flag.StringVar(&co.ID, "id", "", "UUID")
 	flag.StringVar(&co.Scheme, "scheme", "https", "URL scheme; default=https")
 	flag.StringVar(&co.Host, "host", "localhost", "URL host; default=localhost")
+	flag.StringVar(&co.ApiPath, "apipath", "", "API path, e.g. 'api' for /api")
 	flag.StringVar(&co.Auth, "auth", "", "Authorization Token")
 	flag.StringVar(&co.Subcommand, "sub", "", "Subcommands: extract, grid, and get")
 	flag.StringVar(&co.After, "after", t1.Format(time.RFC3339), "After time (StartTime UTC); default=now-7 days")

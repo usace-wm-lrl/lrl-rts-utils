@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Python: rtsutils and go",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
@@ -17,6 +17,45 @@
                 "CONFIG_FILE": "${workspaceRoot}/cumulus.json",
                 "CUMULUS_TOKEN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImJZYVZSTS0xVmp1LWR2N2NEZ0k5ZnJkNVRtZFl1RU5QbWRoV0NaZU1TWmMifQ.eyJleHAiOjE4Mzg1NTU5ODgsImlhdCI6MTYzODU1NTY4OCwianRpIjoiY2YxMWIzMGEtZDg3Zi00OTU2LWEwNjctMTE0OTJjMTZkYjk2IiwiaXNzIjoiaHR0cHM6Ly9kZXZlbG9wLWF1dGguY29ycHMuY2xvdWQvYXV0aC9yZWFsbXMvd2F0ZXIiLCJhdWQiOlsiYTJ3IiwiYWNjb3VudCJdLCJzdWIiOiIzMmUxYjgzMi1hOGVhLTRiOWMtYWIwNC1hNzI0NmNlNzMyMWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJjdW11bHVzIiwic2Vzc2lvbl9zdGF0ZSI6IjVhNTgyZjNlLWIyYWItNDA2OS05N2I1LTIwZWM0NmQ1MmFmZiIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy13YXRlciIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJjdW11bHVzIjp7InJvbGVzIjpbImFwcGxpY2F0aW9uLmFkbWluIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwicHJlZmVycmVkX3VzZXJuYW1lIjoidG9rZW4ubW9jay5hZG1pbiIsImdpdmVuX25hbWUiOiIiLCJmYW1pbHlfbmFtZSI6IiJ9.fpaIFpqHBnnpBtIe8sOwzSkCEzDbPiHy7FHcI5w1jgI"
             }
+        },
+        {
+            "name": "Go: cwbi-dev anon download",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "console": "integratedTerminal",
+            "program": "${workspaceFolder}/rtsutils/go/cavi/.",
+            "args": [
+                "-before", "2025-04-02T10:00:00Z",
+                "-scheme", "https",
+                "-sub", "grid",
+                "-timeout", "1200",
+                "-host", "cumulus.dev.cwbi.us",
+                "-endpoint", "deprecated/anonymous_downloads",
+                "-after", "2025-04-01T10:00:00Z",
+                "-apipath", "api",
+                "-product", "7c7ba37a-efad-499e-9c3a-5354370b8e9e",
+                "-id", "9d0be099-6751-49d9-8ced-9c4b93d0bd2c"
+            ]
+        },
+        {
+            "name": "Go: corps.cloud anon download",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "console": "integratedTerminal",
+            "program": "${workspaceFolder}/rtsutils/go/cavi/.",
+            "args": [
+                "-before", "2025-04-02T10:00:00Z",
+                "-scheme", "https",
+                "-sub", "grid",
+                "-timeout", "1200",
+                "-host", "cumulus-api.corps.cloud",
+                "-endpoint", "deprecated/anonymous_downloads",
+                "-after", "2025-04-01T10:00:00Z",
+                "-product", "7c7ba37a-efad-499e-9c3a-5354370b8e9e",
+                "-id", "9d0be099-6751-49d9-8ced-9c4b93d0bd2c"
+            ]
         }
     ]
 }
