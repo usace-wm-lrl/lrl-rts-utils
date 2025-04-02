@@ -3,12 +3,13 @@ package main
 import (
 	"log"
 	"net/url"
+	"path"
 	"time"
 
 	"github.com/pkg/errors"
 )
 
-func grid(url url.URL, p payload, t int) (string, error) {
+func grid(url url.URL, p payload, t int, apiPath string) (string, error) {
 	// func grid(url url.URL, p payload, t int, tk string) (string, error) {
 
 	var dssfilepath string
@@ -22,7 +23,7 @@ func grid(url url.URL, p payload, t int) (string, error) {
 	}
 
 	downloadUrl := url
-	downloadUrl.Path = "downloads" + "/" + us.ID
+	downloadUrl.Path = path.Join(apiPath, "downloads", us.ID)
 	// url.Path = url.Path + "/" + us.ID
 
 	log.Println("Endpoint/ID: " + url.Path)
