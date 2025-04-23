@@ -121,7 +121,8 @@ def copy_dss(dss_src, dss_dst):
             dss_cumulus = HecDss.open(dss_src)
             max_retries = 10
             for i in range(max_retries):
-                dss_cumulus.copyFile(dss_dst)
+                pathnames = dss_cumulus.getPathnameList()
+                dss_cumulus.copyRecordsFrom(dss_dst, pathnames)
                 copy_success = verify_copy(dss_src, dss_dst)
                 if copy_success:
                     break
