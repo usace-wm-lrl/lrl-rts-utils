@@ -8,6 +8,8 @@ on:
       # - develop
       - stable
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   windows-zip:
     runs-on: windows-latest
