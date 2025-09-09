@@ -7,7 +7,6 @@ CAVI environmnet
 from collections import namedtuple
 from datetime import datetime, timedelta
 import os
-import tempfile
 from rtsutils.usgs import USGS_EXTRACT_CODES
 
 try:
@@ -15,7 +14,7 @@ try:
     from hec.io import TimeSeriesContainer
     from hec.hecmath import TimeSeriesMath
     from hec.hecmath.functions import TimeSeriesFunctions
-    from hec.heclib.dss import HecDss, HecDSSUtilities
+    from hec.heclib.dss import HecDss
     from hec.heclib.util import HecTime
 except ImportError as ex:
     print(ex)
@@ -52,7 +51,8 @@ def put_timeseries(site, dsspath, apart, bpart):
     dss = HecDss.open(dsspath)
     try:
         times = [
-            HecTime(t, HecTime.MINUTE_GRANULARITY).value() for t in site_parameters.times
+            HecTime(t, HecTime.MINUTE_GRANULARITY).value()
+            for t in site_parameters.times
         ]
 
         timestep_min = None
@@ -104,7 +104,7 @@ def put_timeseries(site, dsspath, apart, bpart):
         )
 
 
-def convert_dss(dss_src, dss_dst):
+def copy_dss(dss_src, dss_dst):
     """convert DSS7 from Cumulus to DSS6 on local machine defined by DSS
     destination
 
@@ -118,29 +118,25 @@ def convert_dss(dss_src, dss_dst):
     msg = "Downloaded grid not found"
     if os.path.exists(dss_src):
         try:
-            dss7 = HecDSSUtilities()
-            dss7.setDSSFileName(dss_src)
-            dss6_temp = os.path.join(tempfile.gettempdir(), "dss6.dss")
-            result = dss7.convertVersion(dss6_temp)
-            dss6 = HecDSSUtilities()
-            dss6.setDSSFileName(dss6_temp)
+            dss_cumulus = HecDss.open(dss_src)
             max_retries = 10
             for i in range(max_retries):
-                dss6.copyFile(dss_dst)
-                copy_success = verify_copy(dss6_temp, dss_dst)
+                pathnames = dss_cumulus.getPathnameList()
+                dss_cumulus.copyRecordsFrom(dss_dst, pathnames)
+                copy_success = verify_copy(dss_src, dss_dst)
                 if copy_success:
                     break
                 print("Failed DSS copy attempt {} of {}".format(i + 1, max_retries))
             else:
-                raise Exception("Failed to copy downloaded grids to destination DSS file")
+                raise Exception(
+                    "Failed to copy downloaded grids to destination DSS file"
+                )
         finally:
-            dss7.close()
-            dss6.close()
+            dss_cumulus.close()
             print("Try removing tmp DSS files")
             os.remove(dss_src)
-            os.remove(dss6_temp)
 
-        msg = "Converted '{}' to '{}' (int={})".format(dss_src, dss_dst, result)
+        msg = "Converted '{}' to '{}'".format(dss_src, dss_dst)
 
     print(msg)
 
@@ -160,13 +156,11 @@ def verify_copy(dss_src_path, dss_dst_path):
     bool
         True if all source DSS pathnames exist in the destination DSS, false if not.
     """
-    dss_src = HecDSSUtilities()
-    dss_src.setDSSFileName(dss_src_path)
-    src_paths = dss_src.getPathnameList(True)
+    dss_src = HecDss.open(dss_src_path)
+    src_paths = dss_src.getPathnameList()
     src_paths = [src_path.upper() for src_path in src_paths]
-    dest_dss = HecDSSUtilities()
-    dest_dss.setDSSFileName(dss_dst_path)
-    dest_paths = dest_dss.getPathnameList(True)
+    dest_dss = HecDss.open(dss_dst_path)
+    dest_paths = dest_dss.getPathnameList()
     dest_paths = [dest_path.upper() for dest_path in dest_paths]
 
     is_fully_copied = True

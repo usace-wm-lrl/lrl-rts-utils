@@ -138,7 +138,7 @@ class Cumulus():
                 raise Exception(err)
         else:
             _, file_path = stdout.split("::")
-            jutil.convert_dss(file_path, configurations["dss"])
+            jutil.copy_dss(file_path, configurations["dss"])
 
             cls.report("Cumulus download completed successfully.")
             if cls.publish is None:
