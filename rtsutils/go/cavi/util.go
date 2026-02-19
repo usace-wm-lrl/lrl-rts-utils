@@ -15,6 +15,9 @@ var allowableHosts = map[string]bool{
 	"github.com":                      true,
 	"raw.githubusercontent.com":       true,
 	"cumulus.dev.cwbi.us":             true,
+	"cumulus-test.cwbi.us":            true,
+	"cumulus.cwbi.mil":                true,
+	"cumulus.sec.usace.army.mil":      true,
 }
 
 func allowableHost(s string) error {
